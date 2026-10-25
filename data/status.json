@@ -1,0 +1,14 @@
+{
+ "updated": "2026-10-25",
+ "lt_hr": 185,
+ "lt_pace": "4:17",
+ "vo2max": 52.9,
+ "acute_load": 957,
+ "chronic_load": 404,
+ "acwr": 2.3,
+ "status": "перегрузка (калибровка)",
+ "pred_5k": "19:56",
+ "pred_10k": "43:04",
+ "load_balance": "не хватает высокой аэробной",
+ "calibrating_until": "2026-11-15"
+}

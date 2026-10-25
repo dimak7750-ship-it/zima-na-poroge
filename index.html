@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Зима на пороге — факт</title>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#fcfcfb; --ink:#1b1b1a; --ink2:#52514e; --muted:#8a8984; --line:#e6e5e1; --soft:#f2f1ee;
+  --fact:#2a78d6; --plan:#c9c8c2; --over:#eb6834; --warn-bg:#fdf3e1; --warn:#8a5a00;
+}
+@media (prefers-color-scheme:dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme:dark;
+    --bg:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#8f8e86; --line:#33332f; --soft:#242422;
+    --fact:#3987e5; --plan:#55544f; --over:#d95926; --warn-bg:#33291a; --warn:#e2b45c;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#8f8e86; --line:#33332f; --soft:#242422;
+  --fact:#3987e5; --plan:#55544f; --over:#d95926; --warn-bg:#33291a; --warn:#e2b45c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:28px 16px 60px}
+h1{font-size:24px;margin:0 0 4px;font-weight:650}
+h2{font-size:15px;margin:36px 0 10px;font-weight:650;border-bottom:1px solid var(--line);padding-bottom:6px}
+.sub{color:var(--ink2);margin:0}
+.num{font-variant-numeric:tabular-nums}
+.warn{background:var(--warn-bg);color:var(--warn);padding:8px 12px;border-radius:6px;margin:14px 0 0;font-size:14px}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:500;color:var(--muted);font-size:13px}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi td:first-child{color:var(--ink2)}
+.good{color:var(--ink)} .meh{color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink2);margin:0 0 6px}
+.legend span{white-space:nowrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{fill:var(--muted);font-size:11px}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;padding:6px 8px;border-radius:5px;white-space:nowrap;display:none;z-index:2}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.mini h3{font-size:13px;font-weight:500;color:var(--ink2);margin:0 0 4px}
+.wk-sel{font:inherit;padding:3px 6px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:5px}
+.day td:first-child{white-space:nowrap;color:var(--ink2)}
+.day .p{color:var(--ink2)} .day .f{color:var(--ink)}
+.day tr.key td{background:var(--soft)}
+.notes{list-style:none;padding:0;margin:0}
+.notes li{padding:7px 0;border-bottom:1px solid var(--line)}
+.notes .d{color:var(--muted);font-size:13px;margin-right:8px}
+.notes .s{color:var(--muted);font-size:12px;margin-left:6px}
+a{color:var(--fact)}
+.scroll{overflow-x:auto}
+small{color:var(--muted)}
+.grid{display:grid;grid-template-columns:auto repeat(7,1fr);gap:3px;font-size:12px;align-items:center}
+.grid .h{color:var(--muted);text-align:center}
+.grid .wl{color:var(--ink2);padding-right:8px;white-space:nowrap}
+.grid .wl b{font-weight:500;color:var(--muted)}
+.g{display:inline-flex;align-items:center;justify-content:center;width:10px;height:10px;border-radius:3px;font-style:normal;font-size:9px;font-weight:700;margin-right:6px;vertical-align:-1px}
+.cell{height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;cursor:default}
+.ok{background:var(--fact);color:#fff}
+.dev{background:var(--over);color:#fff}
+.miss{background:transparent;box-shadow:inset 0 0 0 1.5px var(--muted);color:var(--muted)}
+.rest{background:var(--soft)}
+.fut{background:transparent;box-shadow:inset 0 0 0 1px var(--line)}
+.fut.k,.cell.fut.k{box-shadow:inset 0 0 0 1px var(--line),inset 0 -3px 0 var(--plan)}
+.cell.now{outline:2px solid var(--ink);outline-offset:1px}
+.notes .tag{display:inline-block;font-size:11px;padding:0 6px;border-radius:4px;margin-right:6px;background:var(--soft);color:var(--ink2)}
+.notes .tag.miss{box-shadow:none;background:var(--soft);color:var(--ink)}
+.notes .tag.warn{background:var(--over);color:#fff}
+</style>
+</head>
+<body>
+<main>
+  <h1>Зима на пороге — как идёт</h1>
+  <p class="sub" id="head"></p>
+  <p class="warn" id="calib" hidden></p>
+
+  <h2 id="wk-title">Эта неделя</h2>
+  <div class="scroll"><table class="kpi" id="kpi"></table></div>
+
+  <h2>Выполнение плана по дням</h2>
+  <div class="legend gl">
+    <span><i class="g ok"></i>как в плане</span><span><i class="g dev">!</i>с отклонением</span><span><i class="g miss">×</i>пропуск</span><span><i class="g rest"></i>отдых</span><span><i class="g fut"></i>впереди</span><span><i class="g fut k"></i>качественная</span>
+  </div>
+  <div class="scroll"><div id="grid" class="grid"></div></div>
+
+  <h2>Отклонения</h2>
+  <ul class="notes" id="issues"></ul>
+
+  <h2>Километры по неделям</h2>
+  <div class="legend"><span><i style="background:var(--plan)"></i>план</span><span><i style="background:var(--fact)"></i>факт</span></div>
+  <div class="chart" id="c-km"></div>
+
+  <h2>Минуты субпорога (пульс 169–182)</h2>
+  <div class="legend"><span><i style="background:var(--plan)"></i>план</span><span><i style="background:var(--fact)"></i>факт</span><span><i style="background:var(--over)"></i>выше порога</span></div>
+  <div class="chart" id="c-sub"></div>
+  <small>Считается по времени в Z4 из часов. Пульс на первых минутах отрезка не успевает подняться, поэтому факт немного ниже реального.</small>
+
+  <h2>Состояние по дням</h2>
+  <div class="grid3">
+    <div class="mini"><h3>HRV ночью, мс</h3><div class="chart" id="c-hrv"></div></div>
+    <div class="mini"><h3>Пульс покоя</h3><div class="chart" id="c-rhr"></div></div>
+    <div class="mini"><h3>Сон, ч</h3><div class="chart" id="c-sleep"></div></div>
+  </div>
+
+  <h2>По дням: план и что сделано <select class="wk-sel" id="wk-pick"></select></h2>
+  <div class="scroll"><table class="day" id="days"></table></div>
+
+  <h2>Дневник состояний</h2>
+  <ul class="notes" id="notes"></ul>
+
+  <h2>Отчёты</h2>
+  <ul id="reports"></ul>
+
+  <h2>Все недели</h2>
+  <div class="scroll"><table id="all"></table></div>
+  <p><small>Данные из Garmin Connect, обновляются по воскресеньям. План — «Зима на пороге», 2 ноября 2026 — 11 апреля 2027.</small></p>
+</main>
+<div class="tip" id="tip"></div>
+<script src="data/bundle.js"></script>
+<script>
+const D = window.DATA, $ = id => document.getElementById(id);
+const REPO = 'https://github.com/dimak7750-ship-it/zima-na-poroge/blob/main/';
+const MON = ['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
+const fd = s => { const d = new Date(s + 'T00:00'); return d.getDate() + ' ' + MON[d.getMonth()]; };
+const fdd = s => { const d = new Date(s + 'T00:00'); return d.getDate() + '.' + String(d.getMonth()+1).padStart(2,'0'); };
+const v = (x, suf='') => x == null ? '—' : x + suf;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const today = D.built;
+
+// шапка
+const cur = D.weeks.find(w => w.status === 'now') || D.weeks.filter(w => w.status === 'done').pop();
+const main = D.plan.events.find(e => e.main);
+const days = Math.round((new Date(main.date) - new Date(today)) / 864e5);
+const next = D.plan.events.find(e => e.date >= today);
+$('head').textContent = `обновлено ${fd(today)} · ${cur.week ? 'неделя ' + cur.week + ' из 23' : 'до начала цикла'} · до Лужников ${days} дн.` + (next ? ` · ближайший старт: ${fdd(next.date)}, ${next.name}` : '');
+if (D.status.calibrating_until && today < D.status.calibrating_until) {
+  $('calib').hidden = false;
+  $('calib').textContent = `Часы новые: нагрузка, ACWR и статус HRV калибруются примерно до ${fd(D.status.calibrating_until)}. Сейчас Garmin пишет «${D.status.status}», ACWR ${D.status.acwr} — смотрю на это вполглаза.`;
+}
+
+// эта неделя
+$('wk-title').textContent = `Эта неделя · ${fd(cur.start)} — ${fd(cur.end)}` + (cur.tag ? ' · ' + cur.tag : '');
+const pct = (f, p) => (f == null || !p) ? '' : Math.round(f / p * 100) + '%';
+const rows = [
+  ['Километры', cur.km, cur.plan_km, ' км'],
+  ['Субпорог', cur.sub, cur.plan_sub, ' мин'],
+  ['Качественных дней', cur.key, cur.plan_key, ''],
+  ['Силовые', cur.str, cur.plan_str, ''],
+  ['Плавание', cur.swim, cur.plan_swim, ''],
+  ['Самая длинная', cur.long || null, null, ' км'],
+];
+$('kpi').innerHTML = '<tr><th></th><th class="r">факт</th><th class="r">план</th><th class="r"></th></tr>' +
+  rows.map(r => `<tr><td>${r[0]}</td><td class="r">${v(r[1], r[3])}</td><td class="r">${v(r[2], r[3])}</td><td class="r">${pct(r[1], r[2])}</td></tr>`).join('') +
+  `<tr><td>Сон / HRV / пульс покоя, среднее</td><td class="r" colspan="3">${v(cur.sleep,' ч')} · ${v(cur.hrv,' мс')} · ${v(cur.rhr)}</td></tr>`;
+
+// тултип
+const tip = $('tip');
+function showTip(e, html){ tip.innerHTML = html; tip.style.display='block';
+  const x = e.pageX + 12, w = tip.offsetWidth; tip.style.left = Math.min(x, window.scrollX + document.documentElement.clientWidth - w - 8) + 'px'; tip.style.top = (e.pageY - 36) + 'px'; }
+function hideTip(){ tip.style.display='none'; }
+
+// столбики план/факт по неделям
+function bars(el, key, pkey, extraKey, unit){
+  const W = Math.max(300, el.clientWidth || 820), H = 200, L = 30, B = 22, T = 8;
+  const ws = D.weeks;
+  const max = Math.max(10, ...ws.map(w => Math.max(w[pkey] || 0, (w[key] || 0) + (extraKey ? (w[extraKey] || 0) : 0))));
+  const step = (W - L) / ws.length, bw = Math.max(3, step * 0.62);
+  const y = val => T + (H - T - B) * (1 - val / max);
+  const tick = Math.pow(10, Math.floor(Math.log10(max))) * (max / Math.pow(10, Math.floor(Math.log10(max))) > 5 ? 2 : 1);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="план и факт по неделям">`;
+  for (let t = 0; t <= max; t += tick) s += `<line x1="${L}" x2="${W}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" stroke-width="1"/><text x="${L-6}" y="${y(t)+4}" text-anchor="end">${t}</text>`;
+  ws.forEach((w, i) => {
+    const x = L + i * step + (step - bw) / 2;
+    if (w[pkey] != null) s += `<rect x="${x}" y="${y(w[pkey])}" width="${bw}" height="${H-B-y(w[pkey])}" rx="3" fill="var(--plan)" opacity=".55"/>`;
+    const f = w[key];
+    if (f != null && f > 0) {
+      const iw = bw * 0.55, ix = x + (bw - iw) / 2;
+      s += `<rect x="${ix}" y="${y(f)}" width="${iw}" height="${H-B-y(f)}" rx="3" fill="var(--fact)"/>`;
+      if (extraKey && w[extraKey]) s += `<rect x="${ix}" y="${y(f + w[extraKey])}" width="${iw}" height="${Math.max(0, y(f) - y(f + w[extraKey]) - 2)}" rx="2" fill="var(--over)"/>`;
+    }
+    if (w.status === 'now') s += `<line x1="${x+bw/2}" x2="${x+bw/2}" y1="${H-B+2}" y2="${H-B+8}" stroke="var(--ink)" stroke-width="2"/>`;
+    if (i % Math.ceil(46 / step) === 0) s += `<text x="${x+bw/2}" y="${H-4}" text-anchor="middle">${fdd(w.start)}</text>`;
+    s += `<rect class="hit" data-i="${i}" x="${L + i*step}" y="${T}" width="${step}" height="${H-T-B}" fill="transparent"/>`;
+  });
+  s += '</svg>';
+  el.innerHTML = s;
+  el.querySelectorAll('.hit').forEach(r => {
+    const w = ws[+r.dataset.i];
+    r.addEventListener('mousemove', e => showTip(e, `<b>${w.week ? 'Неделя ' + w.week : 'До цикла'}</b> · ${fd(w.start)}–${fd(w.end)}${w.tag ? ' · ' + w.tag : ''}<br>факт: ${v(w[key], unit)}${extraKey && w[extraKey] ? ' + ' + w[extraKey] + unit + ' выше порога' : ''}<br>план: ${v(w[pkey], unit)}`));
+    r.addEventListener('mouseleave', hideTip);
+  });
+}
+bars($('c-km'), 'km', 'plan_km', null, ' км');
+bars($('c-sub'), 'sub', 'plan_sub', 'above', ' мин');
+
+// мини-графики состояния
+function line(el, key, unit, dec){
+  const pts = D.wellness.filter(x => x[key] != null).slice(-56);
+  if (pts.length < 2) { el.innerHTML = '<small>пока мало данных</small>'; return; }
+  const W = Math.max(220, el.clientWidth || 280), H = 110, L = 26, B = 18, T = 8;
+  const vals = pts.map(p => p[key]);
+  let lo = Math.min(...vals), hi = Math.max(...vals); const pad = (hi - lo) * 0.15 || 1; lo -= pad; hi += pad;
+  const x = i => L + (W - L - 6) * i / (pts.length - 1), y = val => T + (H - T - B) * (1 - (val - lo) / (hi - lo));
+  let s = `<svg viewBox="0 0 ${W} ${H}">`;
+  [lo + pad, hi - pad].forEach(t => s += `<line x1="${L}" x2="${W}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${L-4}" y="${y(t)+4}" text-anchor="end">${(+t).toFixed(dec)}</text>`);
+  s += `<polyline fill="none" stroke="var(--fact)" stroke-width="2" stroke-linejoin="round" points="${pts.map((p,i)=>x(i)+','+y(p[key])).join(' ')}"/>`;
+  const li = pts.length - 1;
+  s += `<circle cx="${x(li)}" cy="${y(pts[li][key])}" r="4" fill="var(--fact)" stroke="var(--bg)" stroke-width="2"/>`;
+  s += `<text x="${L}" y="${H-3}">${fdd(pts[0].date)}</text><text x="${W-6}" y="${H-3}" text-anchor="end">${fdd(pts[li].date)}</text>`;
+  pts.forEach((p,i) => s += `<rect class="hit" data-i="${i}" x="${x(i) - (W-L)/pts.length/2}" y="${T}" width="${(W-L)/pts.length}" height="${H-T-B}" fill="transparent"/>`);
+  s += '</svg>';
+  el.innerHTML = s;
+  el.querySelectorAll('.hit').forEach(r => { const p = pts[+r.dataset.i];
+    r.addEventListener('mousemove', e => showTip(e, `${fd(p.date)}: <b>${p[key]}${unit}</b>` + (p.readiness != null ? `<br>готовность ${p.readiness}` : '')));
+    r.addEventListener('mouseleave', hideTip); });
+}
+line($('c-hrv'), 'hrv', ' мс', 0);
+line($('c-rhr'), 'rhr', '', 0);
+line($('c-sleep'), 'sleep_h', ' ч', 1);
+
+// по дням
+const DOW = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+const RUN = ['running','treadmill_running','trail_running','track_running','indoor_running'];
+const TYPE = {running:'бег', treadmill_running:'дорожка', trail_running:'трейл', lap_swimming:'плавание', strength_training:'силовая', open_water_swimming:'плавание'};
+const pick = $('wk-pick');
+D.weeks.filter(w => w.status !== 'future' || w.week).forEach((w, i) => {
+  const o = document.createElement('option'); o.value = w.start;
+  o.textContent = (w.week ? 'нед. ' + w.week : 'до цикла') + ' · ' + fd(w.start); if (w === cur) o.selected = true; pick.appendChild(o); });
+function renderDays(start){
+  const pw = D.plan.weeks.find(w => w.start === start);
+  let h = '<tr><th>день</th><th>план</th><th>сделано</th></tr>';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(start + 'T00:00'); d.setDate(d.getDate() + i);
+    const ds = d.toISOString().slice(0,10).replace(/.*/, () => { const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), dd=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${dd}`; });
+    const p = pw ? pw.days[i] : null;
+    const acts = D.activities.filter(a => a.date === ds && a.type !== 'breathwork');
+    const fact = acts.map(a => {
+      let t = `${TYPE[a.type] || a.type} ${a.km != null ? a.km + ' км' : ''}`;
+      if (RUN.includes(a.type)) t += ` · ${a.pace}/км · пульс ${v(a.hr)}`;
+      if (a.z4_min) t += ` · субпорог ${Math.round(a.z4_min)} мин`;
+      if (a.note) t += ` <small>(${esc(a.note)})</small>`;
+      return t; }).join('<br>');
+    const notes = D.notes.filter(n => n.date === ds).map(n => `<br><small>✎ ${esc(n.text)}</small>`).join('');
+    h += `<tr class="${p && p.key ? 'key' : ''}"><td>${DOW[i]} ${d.getDate()}</td><td class="p">${p ? esc(p.session) + (p.km ? ` <small>${p.km} км</small>` : '') : '<small>—</small>'}</td><td class="f">${fact || (ds <= today ? '<small>ничего</small>' : '')}${notes}</td></tr>`;
+  }
+  $('days').innerHTML = h;
+}
+pick.addEventListener('change', () => renderDays(pick.value));
+renderDays(cur.start);
+
+// сетка выполнения
+(function(){
+  const g = $('grid'); let h = '<div></div>' + DOW.map(d => `<div class="h">${d}</div>`).join('');
+  const byWeek = {}; D.grid.forEach(c => (byWeek[c.week] = byWeek[c.week] || []).push(c));
+  const LBL = {ok:'как в плане', dev:'отклонение', miss:'пропуск', rest:'отдых', future:''};
+  Object.keys(byWeek).forEach(n => {
+    const pw = D.plan.weeks[n-1];
+    h += `<div class="wl">${n} <b>${fdd(pw.start)}</b></div>`;
+    byWeek[n].forEach(c => {
+      const cls = c.st === 'future' ? 'fut' : c.st;
+      const mark = c.st === 'dev' ? '!' : c.st === 'miss' ? '×' : '';
+      h += `<div class="cell ${cls}${c.key ? ' k' : ''}${c.date === today ? ' now' : ''}" data-d="${c.date}">${mark}</div>`;
+    });
+  });
+  g.innerHTML = h;
+  g.querySelectorAll('.cell').forEach(el => { const c = D.grid.find(x => x.date === el.dataset.d);
+    el.addEventListener('mousemove', e => showTip(e, `<b>${fd(c.date)}</b>${LBL[c.st] ? ' · ' + LBL[c.st] : ''}<br>план: ${esc(c.session)}${c.plan_km ? ' (' + c.plan_km + ' км)' : ''}` + (c.st !== 'future' ? `<br>факт: ${c.km} км` : '') + c.why.map(w => '<br>! ' + esc(w)).join('')));
+    el.addEventListener('mouseleave', hideTip);
+    el.addEventListener('click', () => { const w = D.weeks.find(x => x.start <= c.date && c.date <= x.end); pick.value = w.start; renderDays(w.start); pick.scrollIntoView({behavior:'smooth', block:'center'}); });
+  });
+})();
+const KIND = {miss:'miss', warn:'warn', info:''};
+$('issues').innerHTML = D.issues.filter(i => i.level !== 'info').slice().reverse().map(i => `<li><span class="d">${fd(i.date)}</span><span class="tag ${KIND[i.level]}">${esc(i.kind)}</span>${esc(i.text)}</li>`).join('') ||
+  '<li><small>Пока нечего показать — отклонения считаются с начала цикла, 2 ноября.</small></li>';
+
+// дневник
+$('notes').innerHTML = D.notes.slice().reverse().map(n => `<li><span class="d">${fd(n.date)}</span>${esc(n.text)}<span class="s">${esc(n.source)}</span></li>`).join('') || '<li><small>пока пусто</small></li>';
+$('reports').innerHTML = D.reports.slice().reverse().map(r => `<li><a href="${REPO}reports/${r}.md">${r}</a></li>`).join('') || '<li><small>пока нет</small></li>';
+
+// все недели
+$('all').innerHTML = '<tr><th>неделя</th><th class="r">км</th><th class="r">план</th><th class="r">суб, мин</th><th class="r">план</th><th class="r">длит.</th><th class="r">сил.</th><th class="r">плав.</th><th class="r">откл.</th><th class="r">сон</th><th class="r">HRV</th></tr>' +
+  D.weeks.filter(w => w.status !== 'future').reverse().map(w => `<tr><td>${w.week ? w.week + ' · ' : ''}${fd(w.start)}</td><td class="r">${v(w.km)}</td><td class="r">${v(w.plan_km)}</td><td class="r">${v(w.sub)}</td><td class="r">${v(w.plan_sub)}</td><td class="r">${w.long ? (+w.long).toFixed(1) : '—'}</td><td class="r">${w.str}</td><td class="r">${w.swim}</td><td class="r">${w.week ? w.issues : '—'}</td><td class="r">${v(w.sleep)}</td><td class="r">${v(w.hrv)}</td></tr>`).join('');
+</script>
+</body>
+</html>
