@@ -75,7 +75,9 @@
   "stress": 32,
   "readiness": 1,
   "acute_load": 759,
-  "recovery_h": 72
+  "recovery_h": 72,
+  "nap_h": 0.45,
+  "sleep_total_h": 6.05
  },
  {
   "date": "2026-10-20",
@@ -88,7 +90,9 @@
   "stress": 25,
   "readiness": 11,
   "acute_load": 819,
-  "recovery_h": 45.1
+  "recovery_h": 45.1,
+  "nap_h": 0,
+  "sleep_total_h": 2.32
  },
  {
   "date": "2026-10-21",
@@ -101,7 +105,9 @@
   "stress": 38,
   "readiness": 27,
   "acute_load": 776,
-  "recovery_h": 25.3
+  "recovery_h": 25.3,
+  "nap_h": 0,
+  "sleep_total_h": 4.88
  },
  {
   "date": "2026-10-22",
@@ -114,7 +120,9 @@
   "stress": 21,
   "readiness": 40,
   "acute_load": 820,
-  "recovery_h": 27.1
+  "recovery_h": 27.1,
+  "nap_h": 0,
+  "sleep_total_h": 2.5
  },
  {
   "date": "2026-10-23",
@@ -127,7 +135,9 @@
   "stress": 27,
   "readiness": 1,
   "acute_load": 995,
-  "recovery_h": 62.4
+  "recovery_h": 62.4,
+  "nap_h": 0,
+  "sleep_total_h": 6.13
  },
  {
   "date": "2026-10-24",
@@ -140,7 +150,9 @@
   "stress": 18,
   "readiness": 34,
   "acute_load": 899,
-  "recovery_h": 32.7
+  "recovery_h": 32.7,
+  "nap_h": 0,
+  "sleep_total_h": 6.75
  },
  {
   "date": "2026-10-25",
@@ -153,6 +165,8 @@
   "stress": 25,
   "readiness": 1,
   "acute_load": 957,
-  "recovery_h": 72
+  "recovery_h": 72,
+  "nap_h": 0,
+  "sleep_total_h": 6.55
  }
 ]

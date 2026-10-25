@@ -167,7 +167,7 @@ details.pw[open] summary::before{content:"▾"}
   <div class="grid3">
     <div class="mini"><h3>HRV ночью, мс</h3><div class="chart" id="c-hrv"></div></div>
     <div class="mini"><h3>Пульс покоя</h3><div class="chart" id="c-rhr"></div></div>
-    <div class="mini"><h3>Сон, ч</h3><div class="chart" id="c-sleep"></div></div>
+    <div class="mini"><h3>Сон с дневным, ч</h3><div class="chart" id="c-sleep"></div></div>
   </div>
 
   <h2>Дневник состояний</h2>
@@ -236,7 +236,8 @@ const W7 = D.wellness.filter(x => x.date > addDays(dataTo, -7));
 const base = D.wellness.filter(x => x.date <= addDays(dataTo, -7));
 const mean = (arr, k) => { const v = arr.map(x => x[k]).filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
 const B = base.filter(x => x.hrv != null).length >= 5 ? base : D.wellness;
-const hrv7 = mean(W7, 'hrv'), hrvN = mean(B, 'hrv'), rhr7 = mean(W7, 'rhr'), rhrN = mean(B, 'rhr'), sleep7 = mean(W7, 'sleep_h');
+W7.forEach(x => { x.sleep_all = x.sleep_total_h != null ? x.sleep_total_h : x.sleep_h; });
+const hrv7 = mean(W7, 'hrv'), hrvN = mean(B, 'hrv'), rhr7 = mean(W7, 'rhr'), rhrN = mean(B, 'rhr'), sleep7 = mean(W7, 'sleep_all'), nap7 = W7.reduce((a, x) => a + (x.nap_h || 0), 0);
 let rec = {st: 'na', word: 'мало данных'};
 if (hrv7 && hrvN && rhr7 && rhrN) {
   const dh = (hrv7 - hrvN) / hrvN, dr = rhr7 - rhrN;
@@ -278,7 +279,7 @@ $('tiles').innerHTML =
   tile('Субпорог', pw && subPlan ? `${subFact}<small> / ${subPlan} мин</small>` : `${subFact}<small> мин</small>`,
        pw && subPlan ? `по графику ${subDue} мин` : 'пульс 169–182', subSt, bar(subFact, subPlan, subDue)) +
   tile('Восстановление', rec.word, hrv7 ? `HRV ${Math.round(hrv7)} (норма ${Math.round(hrvN)}) · пульс ${Math.round(rhr7)} (${Math.round(rhrN)})` : '', rec.st) +
-  tile('Сон', sleep7 ? `${fmt(sleep7)}<small> ч</small>` : '—', 'в среднем за 7 дней, нужно 7+', sleepSt);
+  tile('Сон', sleep7 ? `${fmt(sleep7)}<small> ч</small>` : '—', nap7 >= 0.05 ? `в среднем за 7 дней; днём за неделю ${fmt(nap7)} ч · нужно 7+` : 'в среднем за 7 дней, с дневным · нужно 7+', sleepSt);
 
 // сегодня и завтра
 const planDay = s => { for (const w of D.plan.weeks) for (const d of w.days) if (d.date === s) return d; return null; };
@@ -372,7 +373,8 @@ function line(el, key, unit, dec){
 }
 line($('c-hrv'), 'hrv', ' мс', 0);
 line($('c-rhr'), 'rhr', '', 0);
-line($('c-sleep'), 'sleep_h', ' ч', 1);
+D.wellness.forEach(x => { x.sleep_all = x.sleep_total_h != null ? x.sleep_total_h : x.sleep_h; });
+line($('c-sleep'), 'sleep_all', ' ч', 1);
 
 // по дням
 const DOW = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
@@ -397,7 +399,7 @@ function renderDays(start){
       if (a.note) t += ` <small>(${esc(a.note)})</small>`;
       return t; }).join('<br>');
     const notes = D.notes.filter(n => n.date === ds).map(n => `<br><small>✎ ${esc(n.text)}</small>`).join('');
-    h += `<tr class="${p && p.key ? 'key' : ''}"><td>${DOW[i]} ${d.getDate()}</td><td class="p">${p ? esc(p.session) + (p.km ? ` <small>${p.km} км</small>` : '') + partText(p) : '<small>—</small>'}</td><td class="f">${fact || (ds <= today ? '<small>ничего</small>' : '')}${chips(p)}${notes}</td></tr>`;
+    h += `<tr class="${p && p.key ? 'key' : ''}"><td>${DOW[i]} ${d.getDate()}</td><td class="p">${p ? esc(p.session) + (p.km ? ` <small>${p.km} км</small>` : '') + partText(p) : '<small>—</small>'}</td><td class="f">${fact || (ds <= dataTo && ds < NOW ? '<small>ничего</small>' : '')}${chips(p)}${notes}</td></tr>`;
   }
   $('days').innerHTML = h;
 }
