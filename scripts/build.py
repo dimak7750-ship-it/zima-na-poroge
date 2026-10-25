@@ -15,7 +15,7 @@ status = load('status.json')
 
 RUN = {'running', 'treadmill_running', 'trail_running', 'track_running', 'indoor_running'}
 SWIM = {'lap_swimming', 'open_water_swimming', 'swimming'}
-STR = {'strength_training'}
+STR = {'strength_training', 'hiit'}
 
 def monday(d):
     return d - dt.timedelta(days=d.weekday())
@@ -25,9 +25,45 @@ def avg(xs):
     return round(sum(xs) / len(xs), 1) if xs else None
 
 plan_by_start = {w['start']: w for w in plan['weeks']}
+
+# доп. части дня плана: силовая, прыжки, плавание, велостанок
+BIKE = {'cycling', 'indoor_cycling', 'virtual_ride'}
+JUMP = {'hiit', 'indoor_cardio', 'cardio_training', 'jump_rope'}  # прыжки обычно в той же силовой
+def part_kind(t):
+    l = t.lower()
+    if l.startswith('силовая'): return 'str'
+    if l.startswith('прыжки'): return 'jump'
+    if 'плавание' in l: return 'swim'
+    if 'велостанок' in l: return 'bike'
+    if l.startswith('нет манежа') or l.startswith('либо старт'): return 'alt'
+    return 'note'
+# ручные отметки: в notes.json поле done: ["силовая", "прыжки", "плавание", "велостанок"]
+MAN = {'силовая': 'str', 'прыжки': 'jump', 'плавание': 'swim', 'велостанок': 'bike'}
+manual = {}
+for n in notes:
+    for x in n.get('done', []):
+        if x in MAN:
+            manual.setdefault(n['date'], set()).add(MAN[x])
 first = monday(min(dt.date.fromisoformat(a['date']) for a in acts))
 last = dt.date.fromisoformat(plan['end'])
 today = dt.date.fromisoformat(os.environ.get('TODAY', dt.date.today().isoformat()))
+
+def done_kind(date, kind):
+    if kind in manual.get(date, set()): return True
+    types = {'str': STR, 'swim': SWIM, 'bike': BIKE, 'jump': STR | JUMP}.get(kind)
+    return bool(types) and any(a['date'] == date and a['type'] in types for a in acts)
+for w in plan['weeks']:
+    for dd in w['days']:
+        parts = []
+        for t in [x.strip() for x in dd['extra'].split(' / ') if x.strip()]:
+            k = part_kind(t)
+            done = None
+            if k in ('str', 'swim', 'bike', 'jump') and dd['date'] <= today.isoformat():
+                done = done_kind(dd['date'], k)
+                if done is False and dd['date'] == today.isoformat():
+                    done = None
+            parts.append({'kind': k, 'text': t, 'done': done})
+        dd['parts'] = parts
 
 weeks = []
 d = first
@@ -63,7 +99,7 @@ while d <= last:
         'sub': round(sub) if has_zones else None,
         'above': round(above) if has_zones else None,
         'key': qdays if has_zones else None,
-        'str': sum(1 for a in wa if a['type'] in STR),
+        'str': len({a['date'] for a in wa if a['type'] in STR} | {k for k, v in manual.items() if s <= k <= e and 'str' in v}),
         'swim': sum(1 for a in wa if a['type'] in SWIM),
         'load': round(sum(a['load'] or 0 for a in wa)) if any(a.get('load') for a in wa) else None,
         'sleep': avg([x['sleep_h'] for x in ww]),
@@ -109,8 +145,9 @@ for w in plan['weeks']:
             issue(d['date'], 'пропуск', f"по плану: {d['session']} — бега нет", 'miss')
         elif d['key'] and day_quality_min(d['date']) < 8 and runs:
             issue(d['date'], 'работа не сделана', f"по плану: {d['session']} — субпорога почти нет", 'miss')
-        if d['strength'] and not any(a['date'] == d['date'] and a['type'] in STR for a in acts):
-            issue(d['date'], 'силовая', 'силовая по плану, в часах не записана', 'info')
+        for pt in d['parts']:
+            if pt['kind'] == 'str' and pt['done'] is False:
+                issue(d['date'], 'силовая', pt['text'].split(':')[0] + ' по плану — не отмечена', 'warn')
 for w in weeks:
     if w['status'] != 'done' or not w['plan_km'] or w['km'] is None:
         continue
@@ -130,7 +167,7 @@ for w in plan['weeks']:
     for d in w['days']:
         runs = [a for a in acts if a['date'] == d['date'] and a['type'] in RUN]
         km = round(sum(a['km'] or 0 for a in runs), 1)
-        di = [i for i in issues if i['date'] == d['date'] and i['level'] != 'info' and i['kind'] not in ('объём', 'субпорог')]
+        di = [i for i in issues if i['date'] == d['date'] and i['level'] != 'info' and i['kind'] not in ('объём', 'субпорог', 'силовая')]
         if d['date'] > today.isoformat():
             st = 'future'
         elif d['date'] == today.isoformat() and not runs:
@@ -144,7 +181,7 @@ for w in plan['weeks']:
         else:
             st = 'ok'
         grid.append({'date': d['date'], 'week': w['week'], 'key': d['key'], 'plan_km': d['km'],
-                     'km': km, 'st': st, 'session': d['session'], 'why': [i['text'] for i in di]})
+                     'km': km, 'st': st, 'session': d['session'], 'parts': d['parts'], 'why': [i['text'] for i in di]})
 for w in weeks:
     w['issues'] = sum(1 for i in issues if w['start'] <= i['date'] <= w['end'] and i['level'] != 'info')
 

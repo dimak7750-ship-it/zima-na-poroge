@@ -8,19 +8,19 @@
 :root{
   color-scheme:light;
   --bg:#fcfcfb; --ink:#1b1b1a; --ink2:#52514e; --muted:#8a8984; --line:#e6e5e1; --soft:#f2f1ee;
-  --fact:#2a78d6; --plan:#c9c8c2; --over:#eb6834; --warn-bg:#fdf3e1; --warn:#8a5a00;
+  --fact:#2a78d6; --plan:#c9c8c2; --good:#0ca30c; --warning:#fab219; --warning-ink:#a86f00; --critical:#d03b3b; --over:#eb6834; --warn-bg:#fdf3e1; --warn:#8a5a00;
 }
 @media (prefers-color-scheme:dark){
   :root:where(:not([data-theme="light"])){
     color-scheme:dark;
     --bg:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#8f8e86; --line:#33332f; --soft:#242422;
-    --fact:#3987e5; --plan:#55544f; --over:#d95926; --warn-bg:#33291a; --warn:#e2b45c;
+    --fact:#3987e5; --plan:#55544f; --good:#0ca30c; --warning:#fab219; --warning-ink:#fab219; --critical:#d03b3b; --over:#d95926; --warn-bg:#33291a; --warn:#e2b45c;
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
   --bg:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#8f8e86; --line:#33332f; --soft:#242422;
-  --fact:#3987e5; --plan:#55544f; --over:#d95926; --warn-bg:#33291a; --warn:#e2b45c;
+  --fact:#3987e5; --plan:#55544f; --good:#0ca30c; --warning:#fab219; --warning-ink:#fab219; --critical:#d03b3b; --over:#d95926; --warn-bg:#33291a; --warn:#e2b45c;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
@@ -56,6 +56,63 @@ td.r,th.r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 a{color:var(--fact)}
 .scroll{overflow-x:auto}
 small{color:var(--muted)}
+
+.top{display:flex;flex-direction:column;gap:14px}
+.verdict{display:flex;gap:14px;align-items:center;padding:16px 18px;border-radius:10px;background:var(--soft)}
+.verdict .vi{flex:none;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;background:var(--muted)}
+.verdict.good .vi{background:var(--good)} .verdict.warn .vi{background:var(--warning);color:#1b1b1a} .verdict.bad .vi{background:var(--critical)}
+.vt{font-size:26px;font-weight:650;line-height:1.15}
+.vs{color:var(--ink2);font-size:15px;margin-top:2px}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:700px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.tile{border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.tl{font-size:13px;color:var(--ink2);display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.ts{font-size:12px;color:var(--ink2);white-space:nowrap}
+.tile.good .ts::first-letter{color:var(--good)} .tile.warn .ts::first-letter{color:var(--warning-ink)} .tile.bad .ts::first-letter{color:var(--critical)}
+.tile.bad{border-color:var(--critical)} .tile.warn{border-color:var(--warning)}
+.tv{font-size:26px;font-weight:650;line-height:1.1}
+.tv small{font-size:15px;font-weight:500;color:var(--muted)}
+.tsub{font-size:12.5px;color:var(--muted)}
+.meter{position:relative;height:6px;border-radius:3px;background:var(--soft);margin:4px 0 2px}
+.meter i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--fact)}
+.meter b{position:absolute;top:-3px;width:2px;height:12px;margin-left:-1px;background:var(--ink)}
+.today{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:8px}
+.dl{display:grid;grid-template-columns:86px 1fr;gap:10px;padding:10px 14px}
+.dl+.dl{border-top:1px solid var(--line)}
+.dl.key{background:var(--soft)}
+.dw{color:var(--muted);font-size:13px;padding-top:2px}
+.ds{font-size:17px;font-weight:600}
+.ds small{font-weight:400;color:var(--muted);font-size:14px}
+.dx{font-size:13px;color:var(--ink2);margin-top:2px}
+.strip{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.sd{text-align:center}
+.sh{font-size:12px;color:var(--muted)} .sh.now{color:var(--ink);font-weight:650}
+.sk{font-size:12px;color:var(--ink2);min-height:16px}
+
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.chip{font-size:11.5px;padding:1px 7px;border-radius:10px;box-shadow:inset 0 0 0 1px var(--line);color:var(--ink2);white-space:nowrap}
+.chip.done{background:var(--fact);color:#fff;box-shadow:none}
+.chip.missed{box-shadow:inset 0 0 0 1px var(--critical);color:var(--critical)}
+.chip.missed::before{content:"× "}
+.chip.done::before{content:"✓ "}
+.mini-chips{display:flex;justify-content:center;gap:2px;min-height:14px;margin-top:2px}
+.mc{font-size:9.5px;line-height:13px;min-width:14px;padding:0 2px;border-radius:3px;box-shadow:inset 0 0 0 1px var(--muted);color:var(--ink2)}
+.mc.done{background:var(--fact);box-shadow:none;color:#fff}
+.mc.missed{box-shadow:inset 0 0 0 1px var(--critical);color:var(--critical)}
+.day .px{display:block;font-size:12.5px;color:var(--muted);margin-top:3px}
+details.pw{border-bottom:1px solid var(--line)}
+details.pw summary{cursor:pointer;padding:8px 2px;list-style:none;display:flex;flex-wrap:wrap;gap:2px 12px;align-items:baseline}
+details.pw summary::-webkit-details-marker{display:none}
+details.pw summary::before{content:"▸";color:var(--muted);width:10px}
+details.pw[open] summary::before{content:"▾"}
+.pw .pn{font-weight:600}
+.pw .pd{color:var(--ink2);font-size:13.5px}
+.pw .pk{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.pw .pf{flex-basis:100%;color:var(--muted);font-size:13px;padding-left:22px}
+.pw.now summary .pn::after{content:" · сейчас";color:var(--fact);font-weight:500}
+.pw table{margin:0 0 10px}
+.pw td{font-size:13.5px}
+.stamp{font-size:12.5px;color:var(--muted);margin:0}
 .grid{display:grid;grid-template-columns:auto repeat(7,1fr);gap:3px;font-size:12px;align-items:center}
 .grid .h{color:var(--muted);text-align:center}
 .grid .wl{color:var(--ink2);padding-right:8px;white-space:nowrap}
@@ -76,21 +133,25 @@ small{color:var(--muted)}
 </head>
 <body>
 <main>
-  <h1>Зима на пороге — как идёт</h1>
-  <p class="sub" id="head"></p>
-  <p class="warn" id="calib" hidden></p>
+  <div class="top">
+    <div class="verdict" id="verdict"></div>
+    <div class="tiles" id="tiles"></div>
+    <div class="today" id="today"></div>
+    <div class="strip" id="strip"></div>
+    <p class="stamp" id="head"></p>
+  </div>
 
-  <h2 id="wk-title">Эта неделя</h2>
-  <div class="scroll"><table class="kpi" id="kpi"></table></div>
+  <h2>План недели и что сделано <select class="wk-sel" id="wk-pick"></select></h2>
+  <div class="scroll"><table class="day" id="days"></table></div>
+
+  <h2>Отклонения</h2>
+  <ul class="notes" id="issues"></ul>
 
   <h2>Выполнение плана по дням</h2>
   <div class="legend gl">
     <span><i class="g ok"></i>как в плане</span><span><i class="g dev">!</i>с отклонением</span><span><i class="g miss">×</i>пропуск</span><span><i class="g rest"></i>отдых</span><span><i class="g fut"></i>впереди</span><span><i class="g fut k"></i>качественная</span>
   </div>
   <div class="scroll"><div id="grid" class="grid"></div></div>
-
-  <h2>Отклонения</h2>
-  <ul class="notes" id="issues"></ul>
 
   <h2>Километры по неделям</h2>
   <div class="legend"><span><i style="background:var(--plan)"></i>план</span><span><i style="background:var(--fact)"></i>факт</span></div>
@@ -102,20 +163,21 @@ small{color:var(--muted)}
   <small>Считается по времени в Z4 из часов. Пульс на первых минутах отрезка не успевает подняться, поэтому факт немного ниже реального.</small>
 
   <h2>Состояние по дням</h2>
+  <p class="warn" id="calib" hidden></p>
   <div class="grid3">
     <div class="mini"><h3>HRV ночью, мс</h3><div class="chart" id="c-hrv"></div></div>
     <div class="mini"><h3>Пульс покоя</h3><div class="chart" id="c-rhr"></div></div>
     <div class="mini"><h3>Сон, ч</h3><div class="chart" id="c-sleep"></div></div>
   </div>
 
-  <h2>По дням: план и что сделано <select class="wk-sel" id="wk-pick"></select></h2>
-  <div class="scroll"><table class="day" id="days"></table></div>
-
   <h2>Дневник состояний</h2>
   <ul class="notes" id="notes"></ul>
 
   <h2>Отчёты</h2>
   <ul id="reports"></ul>
+
+  <h2>Весь план</h2>
+  <div id="fullplan"></div>
 
   <h2>Все недели</h2>
   <div class="scroll"><table id="all"></table></div>
@@ -133,32 +195,120 @@ const v = (x, suf='') => x == null ? '—' : x + suf;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const today = D.built;
 
-// шапка
-const cur = D.weeks.find(w => w.status === 'now') || D.weeks.filter(w => w.status === 'done').pop();
-const main = D.plan.events.find(e => e.main);
-const days = Math.round((new Date(main.date) - new Date(today)) / 864e5);
-const next = D.plan.events.find(e => e.date >= today);
-$('head').textContent = `обновлено ${fd(today)} · ${cur.week ? 'неделя ' + cur.week + ' из 23' : 'до начала цикла'} · до Лужников ${days} дн.` + (next ? ` · ближайший старт: ${fdd(next.date)}, ${next.name}` : '');
-if (D.status.calibrating_until && today < D.status.calibrating_until) {
-  $('calib').hidden = false;
-  $('calib').textContent = `Часы новые: нагрузка, ACWR и статус HRV калибруются примерно до ${fd(D.status.calibrating_until)}. Сейчас Garmin пишет «${D.status.status}», ACWR ${D.status.acwr} — смотрю на это вполглаза.`;
+// части дня плана: силовая, прыжки, плавание, велостанок
+const PK = {str:'С', jump:'Пр', swim:'П', bike:'В'};
+const ptName = t => t.split(':')[0].replace(/ (после бега|до штанги|утром|с тренером).*$/,'').replace('Прыжки','Прыжки').trim();
+const ptCls = pt => pt.done === true ? 'done' : pt.done === false ? 'missed' : '';
+const realParts = d => (d && d.parts ? d.parts.filter(p => PK[p.kind]) : []);
+const chips = d => { const ps = realParts(d); return ps.length ? `<div class="chips">${ps.map(p => `<span class="chip ${ptCls(p)}">${esc(ptName(p.text))}</span>`).join('')}</div>` : ''; };
+const miniChips = d => `<div class="mini-chips">${realParts(d).map(p => `<span class="mc ${ptCls(p)}" title="${esc(ptName(p.text))}">${PK[p.kind]}</span>`).join('')}</div>`;
+const partText = d => d && d.parts ? d.parts.map(p => `<span class="px">${esc(p.text)}</span>`).join('') : '';
+
+// ===== главное за 15 секунд =====
+const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const NOW = iso(new Date());
+const addDays = (s, n) => { const d = new Date(s + 'T00:00'); d.setDate(d.getDate() + n); return iso(d); };
+const RUNT = ['running','treadmill_running','trail_running','track_running','indoor_running'];
+const monOf = s => { const d = new Date(s + 'T00:00'); return addDays(s, -((d.getDay() + 6) % 7)); };
+const wkStart = monOf(NOW), wkEnd = addDays(wkStart, 6);
+const cur = D.weeks.find(w => w.start === wkStart) || D.weeks.filter(w => w.status !== 'future').pop();
+const pw = D.plan.weeks.find(w => w.start === wkStart);
+const dataTo = D.wellness.length ? D.wellness[D.wellness.length-1].date : today;
+const upto = NOW < dataTo ? NOW : dataTo;           // до какого дня есть данные
+const runsIn = (a, b) => D.activities.filter(x => RUNT.includes(x.type) && x.date >= a && x.date <= b);
+const r1 = x => Math.round(x * 10) / 10;
+const fmt = x => (Math.abs(x) < 10 ? r1(x).toFixed(1) : String(r1(x))).replace('.', ',');
+
+// факт недели и «сколько должно быть к сегодня»
+const wRuns = runsIn(wkStart, upto);
+const kmFact = r1(wRuns.reduce((s, a) => s + (a.km || 0), 0));
+const subFact = Math.round(wRuns.reduce((s, a) => s + (a.z4_min || 0), 0));
+let kmPlan = null, kmDue = null, subPlan = null, subDue = null;
+if (pw) {
+  kmPlan = pw.km; subPlan = pw.sub_min;
+  kmDue = pw.days.filter(d => d.date <= upto).reduce((s, d) => s + d.km, 0);
+  const keyDays = pw.days.filter(d => d.key), keyDone = keyDays.filter(d => d.date <= upto).length;
+  subDue = subPlan && keyDays.length ? Math.round(subPlan * keyDone / keyDays.length) : null;
 }
 
-// эта неделя
-$('wk-title').textContent = `Эта неделя · ${fd(cur.start)} — ${fd(cur.end)}` + (cur.tag ? ' · ' + cur.tag : '');
-const pct = (f, p) => (f == null || !p) ? '' : Math.round(f / p * 100) + '%';
-const rows = [
-  ['Километры', cur.km, cur.plan_km, ' км'],
-  ['Субпорог', cur.sub, cur.plan_sub, ' мин'],
-  ['Качественных дней', cur.key, cur.plan_key, ''],
-  ['Силовые', cur.str, cur.plan_str, ''],
-  ['Плавание', cur.swim, cur.plan_swim, ''],
-  ['Самая длинная', cur.long || null, null, ' км'],
-];
-$('kpi').innerHTML = '<tr><th></th><th class="r">факт</th><th class="r">план</th><th class="r"></th></tr>' +
-  rows.map(r => `<tr><td>${r[0]}</td><td class="r">${v(r[1], r[3])}</td><td class="r">${v(r[2], r[3])}</td><td class="r">${pct(r[1], r[2])}</td></tr>`).join('') +
-  `<tr><td>Сон / HRV / пульс покоя, среднее</td><td class="r" colspan="3">${v(cur.sleep,' ч')} · ${v(cur.hrv,' мс')} · ${v(cur.rhr)}</td></tr>`;
+// восстановление: последние 7 дней против своей нормы
+const W7 = D.wellness.filter(x => x.date > addDays(dataTo, -7));
+const base = D.wellness.filter(x => x.date <= addDays(dataTo, -7));
+const mean = (arr, k) => { const v = arr.map(x => x[k]).filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+const B = base.filter(x => x.hrv != null).length >= 5 ? base : D.wellness;
+const hrv7 = mean(W7, 'hrv'), hrvN = mean(B, 'hrv'), rhr7 = mean(W7, 'rhr'), rhrN = mean(B, 'rhr'), sleep7 = mean(W7, 'sleep_h');
+let rec = {st: 'na', word: 'мало данных'};
+if (hrv7 && hrvN && rhr7 && rhrN) {
+  const dh = (hrv7 - hrvN) / hrvN, dr = rhr7 - rhrN;
+  if (dh < -0.10 || dr > 4) rec = {st: 'bad', word: 'под нагрузкой'};
+  else if (dh < -0.05 || dr > 2) rec = {st: 'warn', word: 'чуть ниже нормы'};
+  else rec = {st: 'good', word: 'в норме'};
+}
+const sleepSt = sleep7 == null ? 'na' : sleep7 < 6 ? 'bad' : sleep7 < 7 ? 'warn' : 'good';
+const weekIssues = D.issues.filter(i => i.date >= wkStart && i.date <= wkEnd && i.level !== 'info');
 
+// объём относительно графика
+let volSt = 'na';
+if (kmDue) { const r = kmFact / kmDue; volSt = r < 0.75 ? 'bad' : r < 0.9 ? 'warn' : r > 1.15 ? 'warn' : 'good'; }
+
+// вердикт: самое важное одной строкой
+const nextEv = D.plan.events.find(e => e.date >= NOW);
+const dTo = s => Math.round((new Date(s + 'T00:00') - new Date(NOW + 'T00:00')) / 864e5);
+let V;
+if (rec.st === 'bad') V = {st:'bad', t:'Сбавь', s:`восстановление ниже нормы: HRV ${Math.round(hrv7)} при норме ${Math.round(hrvN)}, пульс покоя ${Math.round(rhr7)}`};
+else if (sleepSt === 'bad') V = {st:'bad', t:'Мало сна', s:`${fmt(sleep7)} ч в среднем за неделю. Сейчас это мешает восстановлению сильнее нагрузки`};
+else if (volSt === 'bad') V = {st:'warn', t:'Отстаёшь от плана', s:`${fmt(kmFact)} из ${kmDue} км по графику на сегодня`};
+else if (weekIssues.length >= 2) V = {st:'warn', t:`Отклонений: ${weekIssues.length}`, s: weekIssues[0].text};
+else if (!pw) V = {st: rec.st === 'good' ? 'good' : 'warn', t: NOW < D.plan.start ? `До цикла ${dTo(D.plan.start)} дн.` : 'Цикл завершён', s: nextEv ? `Ближайший старт через ${dTo(nextEv.date)} дн. — ${nextEv.name}` : ''};
+else V = {st:'good', t:'Идёшь по плану', s: pw.week ? `неделя ${pw.week} из 23${pw.tag ? ' · ' + pw.tag : ''}` : pw.focus};
+const ICON = {good:'✓', warn:'!', bad:'✕', na:'·'};
+$('verdict').className = 'verdict ' + V.st;
+$('verdict').innerHTML = `<span class="vi">${ICON[V.st]}</span><div><div class="vt">${esc(V.t)}</div><div class="vs">${esc(V.s)}</div></div>`;
+
+// плитки
+const LBL = {good:'норма', warn:'внимание', bad:'плохо', na:''};
+function bar(f, plan, due){ if (!plan) return ''; const w = Math.min(100, f / plan * 100), m = due != null ? Math.min(100, due / plan * 100) : null;
+  return `<div class="meter"><i style="width:${w}%"></i>${m != null ? `<b style="left:${m}%"></b>` : ''}</div>`; }
+const tile = (lbl, val, sub, st, extra='') => `<div class="tile ${st}"><div class="tl">${lbl}${st !== 'na' && LBL[st] ? ` <span class="ts">${ICON[st]} ${LBL[st]}</span>` : ''}</div><div class="tv">${val}</div>${extra}<div class="tsub">${sub}</div></div>`;
+let subSt = 'na';
+if (subDue) { const r = subFact / subDue; subSt = r < 0.75 ? 'bad' : r < 0.9 ? 'warn' : 'good'; }
+$('tiles').innerHTML =
+  tile('Объём недели', pw ? `${fmt(kmFact)}<small> / ${kmPlan} км</small>` : `${fmt(kmFact)}<small> км</small>`,
+       pw ? `по графику на сегодня ${kmDue} км` : 'плана на эту неделю нет', volSt, bar(kmFact, kmPlan, kmDue)) +
+  tile('Субпорог', pw && subPlan ? `${subFact}<small> / ${subPlan} мин</small>` : `${subFact}<small> мин</small>`,
+       pw && subPlan ? `по графику ${subDue} мин` : 'пульс 169–182', subSt, bar(subFact, subPlan, subDue)) +
+  tile('Восстановление', rec.word, hrv7 ? `HRV ${Math.round(hrv7)} (норма ${Math.round(hrvN)}) · пульс ${Math.round(rhr7)} (${Math.round(rhrN)})` : '', rec.st) +
+  tile('Сон', sleep7 ? `${fmt(sleep7)}<small> ч</small>` : '—', 'в среднем за 7 дней, нужно 7+', sleepSt);
+
+// сегодня и завтра
+const planDay = s => { for (const w of D.plan.weeks) for (const d of w.days) if (d.date === s) return d; return null; };
+const tomorrow = addDays(NOW, 1);
+const dayLine = (lbl, s) => { const p = planDay(s); const ev = D.plan.events.find(e => e.date === s);
+  const txt = p ? esc(p.session) + (p.km ? ` <small>${p.km} км</small>` : '') : ev ? esc(ev.name) : '<small>в плане ничего — по самочувствию</small>';
+  const extra = p && p.parts ? p.parts.map(x => `<div class="dx">${esc(x.text)}</div>`).join('') : '';
+  return `<div class="dl ${p && p.key ? 'key' : ''}"><div class="dw">${lbl}</div><div><div class="ds">${txt}</div>${chips(p)}${extra}</div></div>`; };
+$('today').innerHTML = dayLine('Сегодня', NOW) + dayLine('Завтра', tomorrow);
+
+// полоска недели: 7 дней
+const DW = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+let st = '';
+for (let i = 0; i < 7; i++) {
+  const ds = addDays(wkStart, i), g = D.grid.find(c => c.date === ds), runs = runsIn(ds, ds);
+  const km = r1(runs.reduce((s, a) => s + (a.km || 0), 0));
+  let cls = g ? (g.st === 'future' ? 'fut' : g.st) : (ds > upto ? 'fut' : (runs.length ? 'ok' : 'rest'));
+  if (!g && ds <= upto && runs.length && Math.max(...runs.map(a => a.hr || 0)) > 0) cls = 'ok';
+  const mark = cls === 'dev' ? '!' : cls === 'miss' ? '×' : '';
+  const label = ds > upto ? (g && g.plan_km ? g.plan_km : '') : (km ? fmt(km) : '');
+  st += `<div class="sd"><div class="sh${ds === NOW ? ' now' : ''}">${DW[i]}</div><div class="cell ${cls}${g && g.key ? ' k' : ''}${ds === NOW ? ' now' : ''}">${mark}</div><div class="sk">${label}</div>${miniChips(planDay(ds))}</div>`;
+}
+$('strip').innerHTML = st;
+
+const main = D.plan.events.find(e => e.main);
+$('head').textContent = (dTo(dataTo) < -1 ? '⚠ данные не обновлялись с ' : 'данные на ') + `${fd(dataTo)} · до Лужников ${dTo(main.date)} дн.` + (nextEv && !V.s.includes(nextEv.name) ? ` · ближайший старт ${fdd(nextEv.date)}: ${nextEv.name}` : '');
+if (D.status.calibrating_until && NOW < D.status.calibrating_until) {
+  $('calib').hidden = false;
+  $('calib').textContent = `Часы новые: нагрузка, ACWR и статус HRV Garmin калибруются примерно до ${fd(D.status.calibrating_until)}. Сейчас Garmin пишет «${D.status.status}», ACWR ${D.status.acwr} — на это не смотрим. Восстановление выше считается по HRV и пульсу покоя относительно твоей нормы.`;
+}
 // тултип
 const tip = $('tip');
 function showTip(e, html){ tip.innerHTML = html; tip.style.display='block';
@@ -229,9 +379,9 @@ const DOW = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
 const RUN = ['running','treadmill_running','trail_running','track_running','indoor_running'];
 const TYPE = {running:'бег', treadmill_running:'дорожка', trail_running:'трейл', lap_swimming:'плавание', strength_training:'силовая', open_water_swimming:'плавание'};
 const pick = $('wk-pick');
-D.weeks.filter(w => w.status !== 'future' || w.week).forEach((w, i) => {
+D.weeks.filter(w => w.status !== 'future' || w.week != null).forEach((w, i) => {
   const o = document.createElement('option'); o.value = w.start;
-  o.textContent = (w.week ? 'нед. ' + w.week : 'до цикла') + ' · ' + fd(w.start); if (w === cur) o.selected = true; pick.appendChild(o); });
+  o.textContent = (w.week ? 'нед. ' + w.week : w.week === 0 ? 'подводка' : 'до цикла') + ' · ' + fd(w.start); if (w === cur) o.selected = true; pick.appendChild(o); });
 function renderDays(start){
   const pw = D.plan.weeks.find(w => w.start === start);
   let h = '<tr><th>день</th><th>план</th><th>сделано</th></tr>';
@@ -247,7 +397,7 @@ function renderDays(start){
       if (a.note) t += ` <small>(${esc(a.note)})</small>`;
       return t; }).join('<br>');
     const notes = D.notes.filter(n => n.date === ds).map(n => `<br><small>✎ ${esc(n.text)}</small>`).join('');
-    h += `<tr class="${p && p.key ? 'key' : ''}"><td>${DOW[i]} ${d.getDate()}</td><td class="p">${p ? esc(p.session) + (p.km ? ` <small>${p.km} км</small>` : '') : '<small>—</small>'}</td><td class="f">${fact || (ds <= today ? '<small>ничего</small>' : '')}${notes}</td></tr>`;
+    h += `<tr class="${p && p.key ? 'key' : ''}"><td>${DOW[i]} ${d.getDate()}</td><td class="p">${p ? esc(p.session) + (p.km ? ` <small>${p.km} км</small>` : '') + partText(p) : '<small>—</small>'}</td><td class="f">${fact || (ds <= today ? '<small>ничего</small>' : '')}${chips(p)}${notes}</td></tr>`;
   }
   $('days').innerHTML = h;
 }
@@ -260,7 +410,7 @@ renderDays(cur.start);
   const byWeek = {}; D.grid.forEach(c => (byWeek[c.week] = byWeek[c.week] || []).push(c));
   const LBL = {ok:'как в плане', dev:'отклонение', miss:'пропуск', rest:'отдых', future:''};
   Object.keys(byWeek).forEach(n => {
-    const pw = D.plan.weeks[n-1];
+    const pw = D.plan.weeks.find(w => w.week == n);
     h += `<div class="wl">${n} <b>${fdd(pw.start)}</b></div>`;
     byWeek[n].forEach(c => {
       const cls = c.st === 'future' ? 'fut' : c.st;
@@ -270,7 +420,7 @@ renderDays(cur.start);
   });
   g.innerHTML = h;
   g.querySelectorAll('.cell').forEach(el => { const c = D.grid.find(x => x.date === el.dataset.d);
-    el.addEventListener('mousemove', e => showTip(e, `<b>${fd(c.date)}</b>${LBL[c.st] ? ' · ' + LBL[c.st] : ''}<br>план: ${esc(c.session)}${c.plan_km ? ' (' + c.plan_km + ' км)' : ''}` + (c.st !== 'future' ? `<br>факт: ${c.km} км` : '') + c.why.map(w => '<br>! ' + esc(w)).join('')));
+    el.addEventListener('mousemove', e => showTip(e, `<b>${fd(c.date)}</b>${LBL[c.st] ? ' · ' + LBL[c.st] : ''}<br>план: ${esc(c.session)}${c.plan_km ? ' (' + c.plan_km + ' км)' : ''}` + (c.st !== 'future' ? `<br>факт: ${c.km} км` : '') + realParts(c).map(p => '<br>' + (p.done === true ? '✓ ' : p.done === false ? '× ' : '+ ') + esc(ptName(p.text))).join('') + c.why.map(w => '<br>! ' + esc(w)).join('')));
     el.addEventListener('mouseleave', hideTip);
     el.addEventListener('click', () => { const w = D.weeks.find(x => x.start <= c.date && c.date <= x.end); pick.value = w.start; renderDays(w.start); pick.scrollIntoView({behavior:'smooth', block:'center'}); });
   });
@@ -278,6 +428,16 @@ renderDays(cur.start);
 const KIND = {miss:'miss', warn:'warn', info:''};
 $('issues').innerHTML = D.issues.filter(i => i.level !== 'info').slice().reverse().map(i => `<li><span class="d">${fd(i.date)}</span><span class="tag ${KIND[i.level]}">${esc(i.kind)}</span>${esc(i.text)}</li>`).join('') ||
   '<li><small>Пока нечего показать — отклонения считаются с начала цикла, 2 ноября.</small></li>';
+
+
+// весь план
+$('fullplan').innerHTML = D.plan.weeks.map(w => {
+  const isNow = w.start <= NOW && NOW <= w.end;
+  const nStr = w.days.filter(d => realParts(d).some(p => p.kind === 'str')).length;
+  const nSwim = w.days.filter(d => realParts(d).some(p => p.kind === 'swim')).length;
+  const rows = w.days.map((d, i) => `<tr class="${d.key ? 'key' : ''}"><td>${DOW[i]} ${new Date(d.date + 'T00:00').getDate()}</td><td>${esc(d.session)}${d.km ? ` <small>${d.km} км</small>` : ''}${partText(d)}</td></tr>`).join('');
+  return `<details class="pw${isNow ? ' now' : ''}"${isNow ? ' open' : ''}><summary><span class="pn">${w.week ? 'Неделя ' + w.week : 'Подводка'}</span><span class="pd">${fd(w.start)} — ${fd(w.end)}${w.tag ? ' · ' + esc(w.tag) : ''}</span><span class="pk">${w.km} км${w.sub_min ? ' · ' + w.sub_min + ' мин суб.' : ''} · силовых ${nStr} · плаваний ${nSwim}</span>${w.focus ? `<span class="pf">${esc(w.focus)}</span>` : ''}</summary><table class="day">${rows}</table></details>`;
+}).join('');
 
 // дневник
 $('notes').innerHTML = D.notes.slice().reverse().map(n => `<li><span class="d">${fd(n.date)}</span>${esc(n.text)}<span class="s">${esc(n.source)}</span></li>`).join('') || '<li><small>пока пусто</small></li>';
