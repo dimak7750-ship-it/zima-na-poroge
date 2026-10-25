@@ -81,8 +81,8 @@
  },
  {
   "date": "2026-10-20",
-  "sleep_h": 2.32,
-  "sleep_score": 34,
+  "sleep_h": null,
+  "sleep_score": null,
   "hrv": 97,
   "hrv_week": 97,
   "rhr": 52,
@@ -92,7 +92,8 @@
   "acute_load": 819,
   "recovery_h": 45.1,
   "nap_h": 0,
-  "sleep_total_h": 2.32
+  "sleep_total_h": null,
+  "sleep_err": "ошибка часов: записали ~2,5 ч днём; по словам Дмитрия, спал не меньше 5,5 ч"
  },
  {
   "date": "2026-10-21",
@@ -111,8 +112,8 @@
  },
  {
   "date": "2026-10-22",
-  "sleep_h": 2.5,
-  "sleep_score": 32,
+  "sleep_h": null,
+  "sleep_score": null,
   "hrv": 100,
   "hrv_week": 99,
   "rhr": 49,
@@ -122,7 +123,8 @@
   "acute_load": 820,
   "recovery_h": 27.1,
   "nap_h": 0,
-  "sleep_total_h": 2.5
+  "sleep_total_h": null,
+  "sleep_err": "ошибка часов: записали ~2,5 ч днём; по словам Дмитрия, спал не меньше 5,5 ч"
  },
  {
   "date": "2026-10-23",
