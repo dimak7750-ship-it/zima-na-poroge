@@ -170,5 +170,20 @@
   "recovery_h": 72,
   "nap_h": 0,
   "sleep_total_h": 6.55
+ },
+ {
+  "date": "2026-10-26",
+  "sleep_h": 6.48,
+  "sleep_score": 79,
+  "hrv": 111,
+  "hrv_week": 107,
+  "rhr": 53,
+  "bb_wake": 86,
+  "stress": 24,
+  "readiness": 1,
+  "acute_load": 1156,
+  "recovery_h": 96,
+  "nap_h": 0,
+  "sleep_total_h": 6.48
  }
 ]
