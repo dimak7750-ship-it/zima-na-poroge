@@ -184,7 +184,7 @@ details.pw[open] summary::before{content:"▾"}
   <p><small>Данные из Garmin Connect, обновляются по воскресеньям. План — «Зима на пороге», 2 ноября 2026 — 11 апреля 2027.</small></p>
 </main>
 <div class="tip" id="tip"></div>
-<script src="data/bundle.js"></script>
+<script>document.write('<script src="data/bundle.js?v=' + Date.now() + '"><\/script>');</script>
 <script>
 const D = window.DATA, $ = id => document.getElementById(id);
 const REPO = 'https://github.com/dimak7750-ship-it/zima-na-poroge/blob/main/';
