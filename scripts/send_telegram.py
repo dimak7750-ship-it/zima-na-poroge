@@ -6,7 +6,9 @@
 """
 import json, os, re, sys, glob, uuid, urllib.request
 
-TOKEN = os.environ['TELEGRAM_BOT_TOKEN'].strip()
+TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '').strip()
+if not TOKEN:
+    raise SystemExit('Нет токена бота: добавь секрет TELEGRAM (или TELEGRAM_BOT_TOKEN) в Settings → Secrets → Actions')
 CHAT = os.environ.get('TELEGRAM_CHAT_ID', '').strip()
 REPO = os.environ.get('GITHUB_REPOSITORY', 'dimak7750-ship-it/zima-na-poroge')
 DASH = 'https://dimak7750-ship-it.github.io/zima-na-poroge/'
