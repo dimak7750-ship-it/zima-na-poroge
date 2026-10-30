@@ -28,7 +28,7 @@
 
 - Каждый день в 8:07 и 23:07 по Москве задача в облаке забирает свежие данные, пересчитывает и коммитит. Дашборд обновляется сам.
 - Каждое воскресенье в 22:00 — полный отчёт за неделю: `reports/`, чат и почта dimak7750@gmail.com.
-- Telegram: когда в `reports/` появляется новый отчёт, GitHub Actions (`.github/workflows/telegram.yml`, `scripts/send_telegram.py`) шлёт в бота раздел «Коротко» и весь отчёт файлом. Нужны секреты репозитория `TELEGRAM_BOT_TOKEN` и `TELEGRAM_CHAT_ID`. Проверить вручную: Actions → «Отчёт в Telegram» → Run workflow (отправит последний отчёт).
+- Telegram: когда в `reports/` появляется новый отчёт, GitHub Actions (`.github/workflows/telegram.yml`, `scripts/send_telegram.py`) шлёт в бота раздел «Коротко» и весь отчёт файлом. Нужен секрет репозитория `TELEGRAM_BOT_TOKEN` (бот @garmin_run_plan_bot); `TELEGRAM_CHAT_ID` необязателен — без него чат берётся из последнего сообщения боту. Проверить вручную: Actions → «Отчёт в Telegram» → Run workflow (отправит последний отчёт).
 
 ## Как считаются отклонения
 
