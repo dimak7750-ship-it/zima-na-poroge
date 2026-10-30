@@ -200,5 +200,50 @@
   "recovery_h": 95.3,
   "nap_h": 0,
   "sleep_total_h": 5.42
+ },
+ {
+  "date": "2026-10-28",
+  "sleep_h": null,
+  "sleep_score": null,
+  "hrv": null,
+  "hrv_week": 107,
+  "rhr": 46,
+  "bb_wake": null,
+  "stress": 21,
+  "readiness": 1,
+  "acute_load": 1095,
+  "recovery_h": 77.7,
+  "nap_h": 0,
+  "sleep_total_h": null
+ },
+ {
+  "date": "2026-10-29",
+  "sleep_h": null,
+  "sleep_score": null,
+  "hrv": null,
+  "hrv_week": null,
+  "rhr": 48,
+  "bb_wake": null,
+  "stress": 31,
+  "readiness": 1,
+  "acute_load": 962,
+  "recovery_h": 75.3,
+  "nap_h": 0,
+  "sleep_total_h": null
+ },
+ {
+  "date": "2026-10-30",
+  "sleep_h": 4.08,
+  "sleep_score": 54,
+  "hrv": 112,
+  "hrv_week": 110,
+  "rhr": 49,
+  "bb_wake": 42,
+  "stress": 23,
+  "readiness": 1,
+  "acute_load": 789,
+  "recovery_h": 68.5,
+  "nap_h": 0,
+  "sleep_total_h": 4.08
  }
 ]
