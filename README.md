@@ -19,6 +19,7 @@
 - `data/notes.json` — дневник: что писал сам, что заметили часы
 - `data/status.json` — порог, VO2max, нагрузка на последнее воскресенье
 - `reports/` — воскресные отчёты
+- `outbox/` — разовые сообщения в Telegram: новый `.txt` здесь сразу уходит в бота (HTML-разметка Telegram: `<b>`, `<i>`)
 - `scripts/build.py` — считает недели, отклонения и собирает `data/bundle.js` для дашборда
 - `scripts/send_telegram.py` — отправка отчёта в Telegram (запускается из GitHub Actions)
 

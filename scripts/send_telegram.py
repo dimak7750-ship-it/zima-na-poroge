@@ -36,7 +36,22 @@ def short_part(md):
     return title, part
 
 
+def send_text(path):
+    text = open(path, encoding='utf-8').read().strip()
+    parts, cur = [], ''
+    for block in text.split('\n\n'):
+        if len(cur) + len(block) + 2 > 4000 and cur:
+            parts.append(cur); cur = ''
+        cur = (cur + '\n\n' + block).strip()
+    if cur: parts.append(cur)
+    for part in parts:
+        call('sendMessage', {'chat_id': CHAT, 'text': part, 'parse_mode': 'HTML', 'disable_web_page_preview': True})
+    print('отправлено сообщение', path)
+
+
 def send(path):
+    if path.startswith('outbox/'):
+        return send_text(path)
     md = open(path, encoding='utf-8').read()
     title, part = short_part(md)
     name = os.path.basename(path)
